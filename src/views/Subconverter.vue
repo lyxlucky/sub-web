@@ -24,13 +24,34 @@
                   <el-option v-for="(v, k) in options.clientTypes" :key="k" :label="k" :value="v"></el-option>
                 </el-select>
               </el-form-item>
+              <el-form-item label="后端地址:">
+                <el-select v-model="form.customBackend" allow-create filterable placeholder="请选择" style="width: 100%">
+                  <el-option v-for="item in options.backendOptions" :key="item.value" :label="item.label"
+                    :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="远程配置:">
+                  <el-select v-model="form.remoteConfig" allow-create filterable placeholder="请选择" style="width: 100%">
+                    <el-option-group v-for="group in options.remoteConfig" :key="group.label" :label="group.label">
+                      <el-option v-for="item in group.options" :key="item.value" :label="item.label"
+                        :value="item.value"></el-option>
+                    </el-option-group>
+                    <el-button slot="append" @click="gotoRemoteConfig" icon="el-icon-link">配置示例</el-button>
+                  </el-select>
+              </el-form-item>
 
               <div v-if="advanced === '2'">
                 <el-form-item label="后端地址:">
+                  <!--
                   <el-autocomplete style="width: 100%" v-model="form.customBackend" :fetch-suggestions="backendSearch"
                     placeholder="动动小手，（建议）自行搭建后端服务。例：http://127.0.0.1:25500/sub?">
                     <el-button slot="append" @click="gotoGayhub" icon="el-icon-link">前往项目仓库</el-button>
                   </el-autocomplete>
+                  -->
+                  <el-select v-model="form.customBackend" allow-create filterable placeholder="请选择" style="width: 100%">
+                    <el-option v-for="item in options.backendOptions" :key="item.value" :label="item.label"
+                      :value="item.value"></el-option>
+                  </el-select>
                 </el-form-item>
                 <el-form-item label="远程配置:">
                   <el-select v-model="form.remoteConfig" allow-create filterable placeholder="请选择" style="width: 100%">
@@ -56,7 +77,8 @@
                     <div slot="suffix" style="width: 10px;">:</div>
                   </el-input>
                   <el-input v-model="param.value" placeholder="自定义参数内容">
-                      <el-button slot="suffix" type="text" icon="el-icon-delete" style="margin-right: 5px" @click="customParams.splice(i, 1)"/>
+                    <el-button slot="suffix" type="text" icon="el-icon-delete" style="margin-right: 5px"
+                      @click="customParams.splice(i, 1)" />
                   </el-input>
                 </el-form-item>
 
@@ -180,7 +202,7 @@
       <div slot="title">
         解析 Subconverter 链接
       </div>
-      <el-form label-position="left" :inline="true" >
+      <el-form label-position="left" :inline="true">
         <el-form-item prop="uploadConfig" label="订阅链接：" label-width="85px">
           <el-input v-model="loadConfig" style="width: 565px"></el-input>
         </el-form-item>
@@ -208,7 +230,7 @@ export default {
   data() {
     return {
       backendVersion: "",
-      advanced: "2",
+      advanced: "1",
 
       // 是否为 PC 端
       isPC: true,
@@ -227,13 +249,61 @@ export default {
           ssd: "ssd",
           sssub: "sssub",
           ssr: "ssr",
-          ClashR: "clashr",          
+          ClashR: "clashr",
           V2Ray: "v2ray",
           Trojan: "trojan",
           Surge3: "surge&ver=3",
         },
-        backendOptions: [{ value: "http://127.0.0.1:25500/sub?" }],
+        backendOptions: [
+          { label: "本站订阅转换",value: "https://converter.lyxlucky.site/sub?" },
+          { label:"http://127.0.0.1:25500/sub?", value: "http://127.0.0.1:25500/sub?" }
+        ],
         remoteConfig: [
+          {
+            label: "local",
+            options: [
+              {
+                label: "ACL4SSR_Online 默认版 分组比较全(与Github同步)",
+                value:
+                  "https://cdn.jsdelivr.net/gh/lyxlucky/ACL4SSR@master/Clash/config/ACL4SSR_Online.ini"
+              },
+              {
+                label: "ACL4SSR",
+                value:
+                  "https://cdn.jsdelivr.net/gh/lyxlucky/ACL4SSR@master/Clash/config/ACL4SSR.ini"
+              },
+              {
+                label: "ACL4SSR_AdblockPlus",
+                value:
+                  "https://cdn.jsdelivr.net/gh/lyxlucky/ACL4SSR@master/Clash/config/ACL4SSR_AdblockPlus.ini"
+              },
+              {
+                label: "ACL4SSR_BackCN",
+                value:
+                  "https://cdn.jsdelivr.net/gh/lyxlucky/ACL4SSR@master/Clash/config/ACL4SSR_BackCN.ini"
+              },
+              {
+                label: "ACL4SSR_Mini",
+                value:
+                  "https://cdn.jsdelivr.net/gh/lyxlucky/ACL4SSR@master/Clash/config/ACL4SSR_Mini.ini"
+              },
+              {
+                label: "ACL4SSR_Mini",
+                value:
+                  "https://cdn.jsdelivr.net/gh/lyxlucky/ACL4SSR@master/Clash/config/ACL4SSR_Mini.ini"
+              },
+              {
+                label: "ACL4SSR_Online_Full_MultiMode",
+                value:
+                  "https://cdn.jsdelivr.net/gh/lyxlucky/ACL4SSR@master/Clash/config/ACL4SSR_Online_Full_MultiMode.ini"
+              },
+              {
+                label: "ACL4SSR_Online_Full_NoAuto",
+                value:
+                  "https://cdn.jsdelivr.net/gh/lyxlucky/ACL4SSR@master/Clash/config/ACL4SSR_Online_Full_NoAuto.ini"
+              },
+            ]
+          },
           {
             label: "universal",
             options: [
@@ -309,8 +379,8 @@ export default {
       form: {
         sourceSubUrl: "",
         clientType: "",
-        customBackend: "",
-        remoteConfig: "",
+        customBackend: "https://converter.lyxlucky.site/sub?",
+        remoteConfig: "https://cdn.jsdelivr.net/gh/lyxlucky/ACL4SSR@master/Clash/config/ACL4SSR_Online.ini",
         excludeRemarks: "",
         includeRemarks: "",
         filename: "",
@@ -408,7 +478,7 @@ export default {
       const url = "surge://install-config?url=";
       window.open(url + this.customSubUrl);
     },
-    addCustomParam(){
+    addCustomParam() {
       this.customParams.push({
         name: "",
         value: "",
@@ -435,7 +505,9 @@ export default {
         "&url=" +
         encodeURIComponent(sourceSub) +
         "&insert=" +
-        this.form.insert;
+        this.form.insert +
+        "&config=" + 
+        encodeURIComponent(this.form.remoteConfig);
 
       if (this.advanced === "2") {
         if (this.form.remoteConfig) {
